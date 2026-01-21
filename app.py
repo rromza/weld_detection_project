@@ -51,7 +51,7 @@ def get_class_emoji(class_name):
     """Возвращает эмодзи для класса"""
     emojis = {
         "good_weld": "✅",
-        "bad_weld": "❌",
+        "bad_weld": "❌", 
         "no_weld": "⚠️"
     }
     return emojis.get(class_name, "🔍")
@@ -66,10 +66,21 @@ def get_class_color(class_name):
     return colors.get(class_name, "")
 
 def plot_probabilities(class_names, probs):
-    """Простая визуализация вероятностей"""
+    """Визуализация вероятностей с правильными цветами для каждого класса"""
     fig, ax = plt.subplots(figsize=(8, 3))
     
-    colors = ['#4CAF50', '#F44336', '#FFC107']
+    # Создаем список цветов в соответствии с порядком классов
+    colors = []
+    for class_name in class_names:
+        if class_name == "good_weld":
+            colors.append('#4CAF50')  # зеленый
+        elif class_name == "bad_weld":
+            colors.append('#F44336')  # красный
+        elif class_name == "no_weld":
+            colors.append('#FFC107')  # желтый
+        else:
+            colors.append('#9E9E9E')  # серый для неизвестных классов
+    
     bars = ax.barh(class_names, probs, color=colors)
     
     ax.set_xlim(0, 1)
@@ -82,6 +93,15 @@ def plot_probabilities(class_names, probs):
                f'{prob:.1%}', va='center')
     
     return fig
+
+def get_class_display_name(class_name):
+    """Возвращает читаемое название класса"""
+    display_names = {
+        "good_weld": "Качественный шов",
+        "bad_weld": "Некачественный шов",
+        "no_weld": "Шов не обнаружен"
+    }
+    return display_names.get(class_name, class_name)
 
 def main():
     """Основная функция приложения"""
@@ -96,6 +116,11 @@ def main():
     
     if model is None:
         return
+    
+    # Показываем порядок классов для отладки (можно закомментировать)
+    st.sidebar.markdown("### Порядок классов:")
+    for i, name in enumerate(class_names):
+        st.sidebar.write(f"{i}. {name}")
     
     # Загрузка изображения
     uploaded_file = st.file_uploader(
@@ -132,15 +157,7 @@ def main():
             # Эмодзи и название класса
             emoji = get_class_emoji(pred_class)
             color_class = get_class_color(pred_class)
-            
-            # Преобразуем названия классов в читаемый формат
-            class_display_names = {
-                "good_weld": "Качественный шов",
-                "bad_weld": "Некачественный шов",
-                "no_weld": "Шов не обнаружен"
-            }
-            
-            display_name = class_display_names.get(pred_class, pred_class)
+            display_name = get_class_display_name(pred_class)
             
             # Отображение результата
             col1, col2 = st.columns([1, 3])
@@ -165,7 +182,15 @@ def main():
                 
                 st.write("\n**Все вероятности:**")
                 for name, prob in zip(class_names, all_probs):
-                    st.write(f"- {name}: {prob:.3%}")
+                    if name == "good_weld":
+                        icon = "✅"
+                    elif name == "bad_weld":
+                        icon = "❌"
+                    elif name == "no_weld":
+                        icon = "⚠️"
+                    else:
+                        icon = "🔍"
+                    st.write(f"- {icon} {name}: {prob:.3%}")
 
     # Информация о классах (только при первом запуске)
     else:
