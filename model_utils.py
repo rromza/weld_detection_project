@@ -5,24 +5,14 @@ from PIL import Image
 import os
 
 class WeldClassifier(nn.Module):
-    """Класс модели для классификации сварных швов"""
+    """Класс модели для классификации сварных швов с тремя классами"""
     def __init__(self, config):
         super(WeldClassifier, self).__init__()
         self.config = config
         
-        # Загружаем предобученную модель
-        if config['MODEL_NAME'] == 'efficientnet_b0':
-            backbone = models.efficientnet_b0(weights=None)
-            in_features = 1280
-        elif config['MODEL_NAME'] == 'efficientnet_b1':
-            backbone = models.efficientnet_b1(weights=None)
-            in_features = 1280
-        elif config['MODEL_NAME'] == 'efficientnet_b2':
-            backbone = models.efficientnet_b2(weights=None)
-            in_features = 1408
-        else:
-            raise ValueError(f"Model {config['MODEL_NAME']} not supported")
-        
+        backbone = models.efficientnet_b0(weights=None)
+        in_features = 1280
+                   
         # Замораживаем backbone (опционально)
         for param in backbone.parameters():
             param.requires_grad = False
