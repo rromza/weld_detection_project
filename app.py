@@ -22,7 +22,7 @@ st.markdown("""
 @st.cache_resource
 def load_model_cached():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model, config, class_names = load_model("lightning_results/model_inference.pth", device)
+    model, config, class_names = load_model("model_inference.pth", device)
     return model, config, class_names
 
 def get_class_emoji(class_name):
@@ -123,5 +123,6 @@ def main():
         - ❌ **bad_weld** - Некачественный сварной шов с дефектами
         - ⚠️ **no_weld** - Сварной шов не обнаружен на изображении
         """)
+
 
 main()
