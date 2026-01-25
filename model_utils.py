@@ -6,23 +6,22 @@ from PIL import Image
 class WeldClassifier(nn.Module):
 
     def __init__(self, num_classes=3):
-        super(WeldClassifier, self).__init__()
-        
-        backbone = models.efficientnet_b1(weights=None)
-        in_features = 1280
-                   
+        super().__init__()
+        self.class_names = class_names
+
+        backbone = models.efficientnet_b1(weights='DEFAULT')
         for param in backbone.parameters():
             param.requires_grad = False
-        
+
         backbone.classifier = nn.Sequential(
             nn.Dropout(0.3),
-            nn.Linear(in_features, 512),
+            nn.Linear(1280, 512),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(512, 256),
             nn.ReLU(),
             nn.Dropout(0.2),
-            nn.Linear(256, num_classes)
+            nn.Linear(256, 3)
         )
         
         self.model = backbone
