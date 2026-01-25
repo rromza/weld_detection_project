@@ -7,10 +7,10 @@ class WeldClassifier(nn.Module):
 
     def __init__(self, num_classes=3):
         super().__init__()
-        self.class_names = class_names
-
+        
         backbone = models.efficientnet_b1(weights='DEFAULT')
-        for param in backbone.parameters():
+        
+	for param in backbone.parameters():
             param.requires_grad = False
 
         backbone.classifier = nn.Sequential(
@@ -50,9 +50,9 @@ def load_model(model_path, device='cpu'):
     
     return model, config, class_names
 
-def get_transforms(input_size=224):
+def get_transforms():
     return transforms.Compose([
-    transforms.Resize((input_size, input_size)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
