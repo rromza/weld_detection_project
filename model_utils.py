@@ -10,7 +10,7 @@ class WeldClassifier(nn.Module):
         
         backbone = models.efficientnet_b1(weights='DEFAULT')
         
-	for param in backbone.parameters():
+        for param in backbone.parameters():
             param.requires_grad = False
 
         backbone.classifier = nn.Sequential(
